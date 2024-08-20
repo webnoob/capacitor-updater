@@ -6,6 +6,8 @@
 
 package ee.forgr.capacitor_updater;
 
+import static android.content.Context.RECEIVER_NOT_EXPORTED;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -254,10 +256,18 @@ public class CapacitorUpdater {
   }
 
   public void onResume() {
-    this.activity.registerReceiver(
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      this.activity.registerReceiver(
+        receiver,
+        new IntentFilter(DownloadService.NOTIFICATION),
+        RECEIVER_NOT_EXPORTED
+      );
+    } else {
+      this.activity.registerReceiver(
         receiver,
         new IntentFilter(DownloadService.NOTIFICATION)
       );
+    }
   }
 
   public void onPause() {
